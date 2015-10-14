@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-10-13T09:09:50 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="last_ventxcat" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="57a4f297-8683-4633-bc24-c9a6de427a5b">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="ireport.jasperserver.url" value="http://reportes.granodeoro.com.mx:8080/jasperserver/"/>
+	<property name="ireport.jasperserver.user" value="jasperadmin"/>
+	<property name="ireport.jasperserver.report.resource" value="/Reportes/ventasporcategoria_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/Reportes/ventasporcategoria"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="software.granodeoro.com.mx"/>
+	<parameter name="start" class="java.util.Date">
+		<defaultValueExpression><![CDATA[DATEFORMAT($P{start},"yyyy-mm-dd HH:mm" )]]></defaultValueExpression>
+	</parameter>
+	<parameter name="end" class="java.util.Date">
+		<defaultValueExpression><![CDATA[DATEFORMAT($P{end},"yyyy-mm-dd HH:mm" )]]></defaultValueExpression>
+	</parameter>
+	<parameter name="cat" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="where" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[IF(
+	OR($P{start}==null,$P{end}==null),
+	IF(
+		AND($P{cat}!=null,$P{cat}!=""),
+		"POSC.name ilike '"+$P{cat}+"%' "
+				,"1!=1"
+	  )
+	  ,
+	  IF(
+		AND($P{cat}!=null,$P{cat}!=""),
+				"POSC.name ilike '"+$P{cat}+"%' and POL.create_date::timestamp::date between '"+$P{start}+"' and '"+$P{end}+"'"
+		,
+			 "POL.create_date::timestamp::date between '"+$P{start}+"' and '"+$P{end}+"' "
+			
+	
+	  )
+)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT Categoria,Sum(Cantidad)as Cantidad,sum(Total-SubTotal)as IVA,sum(Total)as Total,sum(SubTotal)as SubTotal,sum(Costo)as Costo,sum(Total - Costo)as Utilidad FROM
+(
+	SELECT T.ProductId,T.TemplateId,Categoria,SUM(Cantidad)as Cantidad,SUM(SubTotal_Iva)as Total,SUM(SubTotal)as SubTotal,(Costo*Cantidad)as Costo
+	FROM
+	 (
+	SELECT PP.ID as ProductId,PT.Id as TemplateId,POSC.NAME as Categoria,POSSC.Name as SubCategoria ,POL.qty as Cantidad,POL.Create_Date as FechaVenta,
+	POL.price_Subtotal as SubTotal,POL.price_subtotal_incl as SubTotal_Iva,
+	(select pph.cost from product_price_history pph where pph.product_template_id =PT.id and pph.create_date < POL.create_date limit 1)AS Costo
+	FROM pos_order_line POL
+	 JOIN product_product PP ON POL.product_id = PP.id
+	 JOIN product_template PT ON PP.product_tmpl_id = PT.id
+	 JOIN pos_category POSSC ON POSSC.id = PT.pos_categ_id
+	 LEFT JOIN pos_category POSC ON POSC.id = POSSC.parent_id
+	
+	WHERE $P!{where}
+	)T
+	GROUP BY T.ProductId,T.TemplateId,Categoria,Costo,Cantidad
+)P
+  group by Categoria]]>
+	</queryString>
+	<field name="categoria" class="java.lang.String"/>
+	<field name="cantidad" class="java.math.BigDecimal"/>
+	<field name="iva" class="java.math.BigDecimal"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<field name="subtotal" class="java.math.BigDecimal"/>
+	<field name="costo" class="java.lang.Double"/>
+	<field name="utilidad" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="60" splitType="Stretch">
+			<staticText>
+				<reportElement x="381" y="20" width="199" height="30" uuid="4579dc96-fc21-4347-9bd9-58d1f6173308"/>
+				<text><![CDATA[Ventas por Clasificación/es]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="50" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="20" width="70" height="30" uuid="bc5fae69-4f43-482a-b746-d574b159290f"/>
+				<text><![CDATA[categoria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="120" y="20" width="90" height="30" uuid="7e5c1212-2a2a-4fed-a4a1-5f7d255e0fd5"/>
+				<text><![CDATA[cantidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="20" width="90" height="30" uuid="42eec3e5-2460-4bea-8375-3c1443124745"/>
+				<text><![CDATA[iva]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="20" width="90" height="30" uuid="c5c7b7b0-c963-44d3-ba39-7a26cbb9ad2b"/>
+				<text><![CDATA[subtotal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="20" width="90" height="30" uuid="83da35f3-00c4-4f21-a31a-2a2990693c5e"/>
+				<text><![CDATA[total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="580" y="20" width="90" height="30" uuid="c39a6809-0da3-4974-a189-3a1df3902d1b"/>
+				<text><![CDATA[costo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="680" y="20" width="90" height="30" uuid="028bcf90-47f8-497a-be75-7f7bcdc1ba89"/>
+				<text><![CDATA[utilidad]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="48" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="10" width="70" height="30" uuid="d680b074-23cf-46be-a07e-cba56781632c"/>
+				<textFieldExpression><![CDATA[$F{categoria}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="120" y="10" width="90" height="30" uuid="ef303553-673b-426c-b7e8-333e9db4b01a"/>
+				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="390" y="10" width="80" height="30" uuid="298aa62b-e2a8-4fbc-b39b-a0c85c437c18"/>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("$ #,##0.00").format($F{iva})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="10" width="90" height="30" uuid="72140436-7540-4d1d-b5fa-ef9442b4a32c"/>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("$ #,##0.00").format($F{subtotal})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="10" width="90" height="30" uuid="b65ff8e0-d114-43be-8573-eb116732feb3"/>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("$ #,##0.00").format($F{total})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="10" width="90" height="30" uuid="6eb5bd5f-db8c-4cb9-ba43-bf73f4f2bd6b"/>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("$ #,##0.00").format($F{costo})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="680" y="10" width="90" height="30" uuid="376d2acf-01db-4eb2-925d-b9ac15272488"/>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("$ #,##0.00").format($F{utilidad})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

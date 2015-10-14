@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-10-13T02:14:33 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="catalogoproductos" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8887d013-6132-4d4b-8480-27032f3b2c6a">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="ireport.jasperserver.url" value="http://reportes.granodeoro.com.mx:8080/jasperserver/"/>
+	<property name="ireport.jasperserver.user" value="jasperadmin"/>
+	<property name="ireport.jasperserver.report.resource" value="/Reportes/catalogoproductos_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/Reportes/catalogoproductos"/>
+	<parameter name="start" class="java.util.Date"/>
+	<parameter name="end" class="java.util.Date"/>
+	<parameter name="matriz" class="java.lang.String"/>
+	<parameter name="where" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[IF(OR($P{start}==null,$P{end}==null),IF(OR($P{matriz}==null,$P{matriz}==""),"1!=1","sl.name like '"+$P{matriz}+"%'"),IF(OR($P{matriz}==null,$P{matriz}=="")," si.create_date::timestamp::date between   '"+$P{start}+"' AND '"+$P{end}+"'","  date si.create_date::timestamp::date between '"+$P{start}+"' AND '"+$P{end}+"' and sl.name like '"+$P{matriz}+"%'")   )]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select pt.name as nombre,pt.description as descripcion_proveedores,
+pt.description_sale as descripcion_clientes,posc.name as categoria,si.create_date
+,possc.name as subcategoria,sil.product_code as codigo,pt.list_price as precio,
+(select cost from product_price_history  pph  
+where pph.product_template_id = pt.id and pph.create_date < si.create_date 
+order by pph.create_date asc limit 1)as costo
+,sil.product_qty as existencia_real,sil.theoretical_qty as existencia_teoricaa  from product_product pp
+join product_template pt on pt.id = pp.product_tmpl_id
+join stock_inventory_line sil on pp.id = sil.product_id
+join stock_inventory si on si.id = sil.inventory_id
+join pos_category possc ON possc.id = pt.pos_categ_id
+left join pos_category posc ON posc.id = possc.parent_id]]>
+	</queryString>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="descripcion_proveedores" class="java.lang.String"/>
+	<field name="descripcion_clientes" class="java.lang.String"/>
+	<field name="categoria" class="java.lang.String"/>
+	<field name="create_date" class="java.sql.Timestamp"/>
+	<field name="subcategoria" class="java.lang.String"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="precio" class="java.math.BigDecimal"/>
+	<field name="costo" class="java.lang.Double"/>
+	<field name="existencia_real" class="java.math.BigDecimal"/>
+	<field name="existencia_teoricaa" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="82" splitType="Stretch">
+			<textField>
+				<reportElement x="360" y="25" width="180" height="20" uuid="070821e8-4d12-4fc9-b50e-37589f6f71d5"/>
+				<textFieldExpression><![CDATA["Catalogo de productos"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="33" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="-8" y="0" width="100" height="30" uuid="9659293b-9648-4c61-8c49-dc18bd4c6c7e"/>
+				<text><![CDATA[nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="0" width="80" height="30" uuid="2b30ea98-2dab-4f94-a571-2447b04ef94e"/>
+				<text><![CDATA[categoria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="0" width="70" height="30" uuid="a40414fa-9121-4ca6-aa71-a5f54ea15665"/>
+				<text><![CDATA[codigo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="610" y="-5" width="80" height="30" uuid="d5057354-944f-43a3-bf0e-501eb13300bf"/>
+				<text><![CDATA[precio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="530" y="0" width="70" height="30" uuid="759a68b1-f8ec-46e6-9815-636c2c0961d3"/>
+				<text><![CDATA[costo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="750" y="0" width="50" height="30" uuid="f84e5a2e-f5b4-4d4f-88f1-c0efd6bc3c5a"/>
+				<text><![CDATA[existencia_teoricaa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="0" width="80" height="30" uuid="7cdbb13c-deab-4474-8969-10562c2f4f7f"/>
+				<text><![CDATA[descripcion_proveedores]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="690" y="-5" width="50" height="30" uuid="14e49b43-0dea-419a-b843-0e26e09031a1"/>
+				<text><![CDATA[existencia_real]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="0" width="80" height="30" uuid="4e7860f8-f338-4f28-a757-369cef260a7e"/>
+				<text><![CDATA[subcategoria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="0" width="80" height="30" uuid="e372e48f-77e2-40af-8126-6c73696dbbc3"/>
+				<text><![CDATA[descripcion_clientes]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="-8" y="1" width="80" height="16" uuid="6b6db685-4b05-45ee-a807-82a43e70b937"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="270" y="0" width="80" height="30" uuid="e3892c0e-ee4d-47d6-890d-5f65c5b71656"/>
+				<textFieldExpression><![CDATA[$F{categoria}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="360" y="0" width="80" height="30" uuid="5d6226c8-81fa-428a-a32c-4c46bc8ae51c"/>
+				<textFieldExpression><![CDATA[$F{subcategoria}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="0" width="70" height="30" uuid="159c67c8-6e1d-4b0d-8d5c-7bfcc9bb2845"/>
+				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="610" y="0" width="70" height="30" uuid="b3a66085-bbb5-4e67-94d9-fa704a7be631"/>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("$ #,##0.00").format($F{precio})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="530" y="0" width="70" height="30" uuid="bb985db6-a985-468c-9c61-f087fdecc0ad"/>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("$ #,##0.00").format($F{costo})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="690" y="0" width="49" height="30" uuid="da2b51dd-6f3a-41cd-bbaf-7d1c999075bf"/>
+				<textFieldExpression><![CDATA[$F{existencia_real}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="750" y="0" width="50" height="30" uuid="cbb39682-12e8-4149-ae9d-b14c6294d04c"/>
+				<textFieldExpression><![CDATA[$F{existencia_teoricaa}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="180" y="0" width="80" height="30" uuid="903d4e34-c148-4ead-a0c9-9405ed84d774"/>
+				<textFieldExpression><![CDATA[$F{descripcion_clientes}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="92" y="0" width="80" height="30" uuid="7a77b1bb-bc86-4ea6-889a-47680cac86e9"/>
+				<textFieldExpression><![CDATA[$F{descripcion_proveedores}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-10-13T05:32:35 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoice" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6dd68d60-e20e-4851-808c-8842a53c1847">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="software.granodeoro.com.mx"/>
+	<property name="ireport.jasperserver.url" value="http://reportes.granodeoro.com.mx:8080/jasperserver/"/>
+	<property name="ireport.jasperserver.user" value="jasperadmin"/>
+	<property name="ireport.jasperserver.report.resource" value="/Reportes/invoice_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/Reportes/invoice"/>
+	<parameter name="start" class="java.util.Date"/>
+	<parameter name="end" class="java.util.Date"/>
+	<parameter name="matriz" class="java.lang.String"/>
+	<parameter name="where" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[IF(OR($P{start}==null,$P{end}==null),IF(OR($P{matriz}==null,$P{matriz}==""),"1!=1","RC.name like '"+$P{matriz}+"%'"),IF($P{matriz}==null,"AI.date_invoice between   '"+$P{start}+"' AND '"+$P{end}+"'"," AI.date_invoice between   '"+$P{start}+"' AND '"+$P{end}+"' and RC.name like '"+$P{matriz}+"%'")   )]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT AI.date_invoice,AI.number,RP2.name, AI.amount_untaxed, AI.amount_tax,
+AI.amount_total, AI.state
+FROM account_invoice AI
+JOIN res_partner RP2 ON AI.partner_id = RP2.id
+JOIN res_company RC ON AI.company_id = RC.id
+ WHERE  $P!{where} 
+ORDER BY AI.number]]>
+	</queryString>
+	<field name="date_invoice" class="java.sql.Date"/>
+	<field name="number" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="amount_untaxed" class="java.math.BigDecimal"/>
+	<field name="amount_tax" class="java.math.BigDecimal"/>
+	<field name="amount_total" class="java.math.BigDecimal"/>
+	<field name="state" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<textField>
+				<reportElement x="360" y="10" width="100" height="30" uuid="e04c6d75-3b19-49ba-8267-38906af20f38"/>
+				<textFieldExpression><![CDATA["Lista de Facturas"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="124" y="0" width="100" height="30" uuid="94cefbfd-4afd-4a52-a02c-422fca8cf0c7"/>
+				<text><![CDATA[date_invoice]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="0" width="100" height="30" uuid="77625a4d-dff5-454d-9dae-276aeb2d69b3"/>
+				<text><![CDATA[name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="0" width="100" height="30" uuid="5cfc75b2-1656-4e0b-b01d-e4af82bff515"/>
+				<text><![CDATA[number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="0" width="100" height="30" uuid="3d5a3fb5-eccc-4fb5-b811-1962312de03c"/>
+				<text><![CDATA[amount_untaxed]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="0" width="100" height="30" uuid="855768eb-e0f8-4670-8b10-1e0f588b3328"/>
+				<text><![CDATA[amount_tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="560" y="0" width="100" height="30" uuid="61b36555-be73-4f38-89fa-ebd474654fe0"/>
+				<text><![CDATA[amount_total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="670" y="0" width="100" height="30" uuid="745937e3-333a-4400-8b8a-17810f9dd1ee"/>
+				<text><![CDATA[state]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="40" splitType="Stretch">
+			<textField>
+				<reportElement x="120" y="10" width="100" height="30" uuid="f715e695-08aa-4704-898f-fb0871653110"/>
+				<textFieldExpression><![CDATA[$F{date_invoice}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="8" y="10" width="100" height="30" uuid="7c10ee35-04ca-46c4-b535-cc17d472c4fd"/>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="230" y="10" width="100" height="30" uuid="05eb6c5b-386d-4f1c-aefa-40bf339bf4e9"/>
+				<textFieldExpression><![CDATA[$F{number}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="340" y="10" width="100" height="30" uuid="067e0680-6922-44e6-93fc-c9e3ec7ce301"/>
+				<textFieldExpression><![CDATA[$F{amount_untaxed}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="10" width="100" height="30" uuid="587d3e26-c3de-40bd-af2e-fe7475da43be"/>
+				<textFieldExpression><![CDATA[$F{amount_tax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="560" y="10" width="100" height="30" uuid="6586ee1a-a44c-4300-9c79-981c8c34e169"/>
+				<textFieldExpression><![CDATA[$F{amount_total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="670" y="10" width="100" height="30" uuid="8924d57f-7461-40d0-a9ae-7834b111259c"/>
+				<textFieldExpression><![CDATA[$F{state}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

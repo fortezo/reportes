@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-10-10T10:17:15 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="conteo" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="61e0f1f5-52a4-4599-b248-e30836a63e7e">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="software.granodeoro.com.mx"/>
+	<property name="ireport.jasperserver.url" value="http://reportes.granodeoro.com.mx:8080/jasperserver/"/>
+	<property name="ireport.jasperserver.user" value="jasperadmin"/>
+	<property name="ireport.jasperserver.report.resource" value="/Reportes/conteo_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/Reportes/conteo"/>
+	<parameter name="start" class="java.sql.Date"/>
+	<parameter name="end" class="java.sql.Date">
+		<defaultValueExpression><![CDATA[TODAY( )]]></defaultValueExpression>
+	</parameter>
+	<parameter name="where" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[IF(OR($P{start}==null,$P{end}==null),IF($P{matriz}==null,"1!=1","RC.name like '"+$P{matriz}+"%'"),IF($P{matriz}==null,"AI.date_invoice between   '"+$P{start}+"' AND '"+$P{end}+"'"," AI.date_invoice between   '"+$P{start}+"' AND '"+$P{end}+"' and RC.name like '"+$P{matriz}+"%'")   )]]></defaultValueExpression>
+	</parameter>
+	<parameter name="matriz" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT SI.date,RP.name,SIL.product_code,SIL.product_name,PT.list_price,
+SIL.product_qty, SIL.theoretical_qty,(SIL.theoretical_qty - SIL.product_qty) as DiferenciaPieza,
+(SIL.theoretical_qty - SIL.product_qty *PT.list_price) as DiferenciaDinero
+FROM stock_inventory SI
+JOIN stock_inventory_line SIL ON SIL.inventory_id = SI.id
+JOIN product_product PP ON SIL.product_id = PP.id
+JOIN product_template PT ON PP.product_tmpl_id = PT.id
+JOIN res_users RU ON SIL.create_uid = RU.id
+JOIN res_partner RP ON RU.partner_id = RP.id
+LEFT JOIN res_company RC ON PT.company_id = RC.id
+WHERE $P{where}]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

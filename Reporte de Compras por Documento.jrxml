@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-10-13T06:33:15 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="comprasxdocumento" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b5489d59-b8ca-412c-ae0b-d665a7e7e41c">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="software.granodeoro.com.mx"/>
+	<property name="ireport.jasperserver.url" value="http://reportes.granodeoro.com.mx:8080/jasperserver/"/>
+	<property name="ireport.jasperserver.user" value="jasperadmin"/>
+	<property name="ireport.jasperserver.report.resource" value="/Reportes/comprasxdocumento_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/Reportes/comprasxdocumento"/>
+	<queryString>
+		<![CDATA[SELECT (SELECT name FROM product_category WHERE parent_id=
+(SELECT parent_id FROM product_category WHERE name=PC.name LIMIT 1) LIMIT 1) AS Category, PC.name,
+PP.default_code,PP.name_template,POL.product_qty,POL.price_unit,(POL.product_qty*POL.price_unit) as Total
+FROM purchase_order PO
+JOIN purchase_order_line POL ON POL.order_id = PO.id
+JOIN product_product PP ON POL.product_id = PP.id
+JOIN product_template PT ON PP.product_tmpl_id = PT.id
+JOIN product_category PC ON PT.categ_id = PC.id
+JOIN res_partner RP ON PO.partner_id = RP.id
+JOIN res_company RC ON PO.company_id = RC.id]]>
+	</queryString>
+	<field name="category" class="java.lang.String"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="default_code" class="java.lang.String"/>
+	<field name="name_template" class="java.lang.String"/>
+	<field name="product_qty" class="java.math.BigDecimal"/>
+	<field name="price_unit" class="java.math.BigDecimal"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
